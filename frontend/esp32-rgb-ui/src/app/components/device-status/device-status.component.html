@@ -1,0 +1,124 @@
+<mat-card>
+
+  <mat-card-header>
+    <mat-card-title>
+      Device
+    </mat-card-title>
+
+    <mat-card-subtitle>
+      ESP32 device status
+    </mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <div class="status">
+
+      <span
+        class="status-dot"
+        [class.online]="status?.online"
+        [class.offline]="!status?.online">
+      </span>
+
+      <span>
+        {{ status?.online ? 'Online' : 'Offline' }}
+      </span>
+
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="info-row">
+      <span>Device</span>
+
+      <strong>
+        {{ status?.device || 'Unknown' }}
+      </strong>
+    </div>
+
+    <div class="info-row">
+      <span>IP Address</span>
+
+      <strong>
+        {{ status?.ip || 'Unknown' }}
+      </strong>
+    </div>
+
+    <div class="info-row">
+      <span>Uptime</span>
+
+      <strong>
+        {{ status?.online ? uptime : 'N/A' }}
+      </strong>
+    </div>
+
+    <div class="info-row">
+      <span>Wi-Fi Signal</span>
+
+      <strong>
+        {{ status?.online
+          ? status?.wifiSignal + ' dBm'
+          : 'N/A'
+        }}
+      </strong>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <div class="info-row">
+      <span>Temperature</span>
+
+      <strong>
+        {{ status?.sensor?.temperature !== undefined
+          ? (status?.sensor?.temperature | number:'1.1-1') + ' °C'
+          : 'N/A'
+        }}
+      </strong>
+    </div>
+
+    <div class="info-row">
+      <span>Humidity</span>
+
+      <strong>
+        {{ status?.sensor?.humidity !== undefined
+          ? (status?.sensor?.humidity | number:'1.1-1') + ' %'
+          : 'N/A'
+        }}
+      </strong>
+    </div>
+
+    <div class="info-row">
+      <span>Pressure</span>
+
+      <strong>
+        {{ status?.sensor?.pressure !== undefined
+          ? (status?.sensor?.pressure | number:'1.1-1') + ' hPa'
+          : 'N/A'
+        }}
+      </strong>
+    </div>
+
+    <div class="info-row">
+      <span>Last check</span>
+
+      <strong>
+        {{ lastUpdated || 'Never' }}
+      </strong>
+    </div>
+
+  </mat-card-content>
+
+  <mat-card-actions>
+
+    <button
+      mat-stroked-button
+      (click)="refresh.emit()">
+
+      <mat-icon>refresh</mat-icon>
+      Check Status
+
+    </button>
+
+  </mat-card-actions>
+
+</mat-card>

@@ -1,0 +1,16 @@
+.command {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+}
+
+.command mat-icon {
+  font-size: 20px;
+}
+
+.updated {
+  margin-top: 12px;
+  color: #777;
+  font-size: 13px;
+}

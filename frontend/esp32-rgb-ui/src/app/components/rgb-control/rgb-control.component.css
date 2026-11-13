@@ -1,0 +1,75 @@
+.color-previews {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin: 25px 0;
+}
+
+.color-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.color-label {
+  color: #777;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.color-preview {
+  width: 120px;
+  height: 120px;
+  margin: 8px 0;
+  border-radius: 50%;
+  border: 5px solid #eee;
+  transition: background-color 0.2s ease;
+}
+
+.rgb-value {
+  color: #777;
+  font-size: 13px;
+}
+
+.color-picker {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.color-picker label {
+  display: block;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+input[type="color"] {
+  width: 80px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  cursor: pointer;
+}
+
+mat-card-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.apply-button {
+  flex: 1;
+}
+
+@media (max-width: 500px) {
+
+  .color-previews {
+    gap: 20px;
+  }
+
+  .color-preview {
+    width: 90px;
+    height: 90px;
+  }
+
+}

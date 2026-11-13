@@ -1,0 +1,54 @@
+<div class="dashboard">
+
+  <header class="dashboard-header">
+  <div>
+    <h1>ESP32 RGB Controller</h1>
+    <p>IoT Device Dashboard</p>
+  </div>
+
+  <div class="firmware-version">
+    Firmware v{{ deviceStatus?.firmwareVersion ?? 'Unknown' }}
+  </div>
+</header>
+
+  <div class="dashboard-grid">
+
+    <app-device-status
+      [status]="deviceStatus"
+      [lastUpdated]="lastStatusCheck"
+      (refresh)="checkDeviceStatus()">
+    </app-device-status>
+
+    <app-rgb-control
+      [selectedColor]="selectedColor"
+      [deviceColor]="deviceStatus?.color"
+      (colorChange)="onColorChange($event)"
+      (apply)="applyColor($event)">
+    </app-rgb-control>
+
+    <app-last-command
+      [status]="lastCommand"
+      [updated]="lastCommandTime">
+    </app-last-command>
+
+  </div>
+
+  <div class="firmware-update">
+
+    <div class="firmware-info">
+      <h2>Firmware</h2>
+      <p>Update the ESP32 firmware to the latest version.</p>
+    </div>
+
+    <button
+      type="button"
+      class="update-button"
+      (click)="updateFirmware()"
+      [disabled]="updatingFirmware"
+    >
+      {{ updatingFirmware ? 'Updating firmware...' : 'Update Firmware' }}
+    </button>
+
+  </div>
+
+</div>

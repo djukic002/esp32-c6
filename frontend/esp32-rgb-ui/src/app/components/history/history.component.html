@@ -1,0 +1,234 @@
+<div class="history">
+
+  <header class="history-header">
+
+    <div>
+      <h1>Sensor History</h1>
+      <p>Historical measurements from the ESP32 sensor.</p>
+    </div>
+
+    <button
+      mat-stroked-button
+      (click)="loadHistory()"
+      [disabled]="loading">
+
+      <mat-icon>refresh</mat-icon>
+
+      Refresh
+
+    </button>
+
+  </header>
+
+
+  <p *ngIf="loading">
+    Loading...
+  </p>
+
+
+  <p *ngIf="error">
+    {{ error }}
+  </p>
+
+
+  <div
+    class="charts-grid"
+    *ngIf="!loading && !error && readings.length > 0">
+
+
+    <!-- Temperature -->
+
+    <mat-card>
+
+      <mat-card-header>
+        <mat-card-title>
+          Temperature
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          °C
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+
+        <div class="chart-container">
+
+          <canvas
+            baseChart
+            [data]="temperatureChartData"
+            [options]="chartOptions"
+            type="line">
+          </canvas>
+
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+
+
+    <!-- Humidity -->
+
+    <mat-card>
+
+      <mat-card-header>
+        <mat-card-title>
+          Humidity
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          %
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+
+        <div class="chart-container">
+
+          <canvas
+            baseChart
+            [data]="humidityChartData"
+            [options]="chartOptions"
+            type="line">
+          </canvas>
+
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+
+
+    <!-- Pressure -->
+
+    <mat-card>
+
+      <mat-card-header>
+        <mat-card-title>
+          Pressure
+        </mat-card-title>
+
+        <mat-card-subtitle>
+          hPa
+        </mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+
+        <div class="chart-container">
+
+          <canvas
+            baseChart
+            [data]="pressureChartData"
+            [options]="chartOptions"
+            type="line">
+          </canvas>
+
+        </div>
+
+      </mat-card-content>
+
+    </mat-card>
+
+  </div>
+
+
+  <!-- Table toggle -->
+
+  <div
+    class="table-toggle"
+    *ngIf="!loading && !error && readings.length > 0">
+
+    <button
+      mat-stroked-button
+      (click)="toggleTable()">
+
+      <mat-icon>
+        {{ showTable ? 'expand_less' : 'expand_more' }}
+      </mat-icon>
+
+      {{ showTable ? 'Hide table' : 'Show table' }}
+
+    </button>
+
+  </div>
+
+
+  <!-- Table -->
+
+  <mat-card
+    class="history-table-card"
+    *ngIf="showTable && !loading && !error">
+
+    <mat-card-header>
+
+      <mat-card-title>
+        Sensor Readings
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        Latest {{ readings.length }} measurements
+      </mat-card-subtitle>
+
+    </mat-card-header>
+
+
+    <mat-card-content>
+
+      <div class="table-container">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Time</th>
+              <th>Temperature</th>
+              <th>Humidity</th>
+              <th>Pressure</th>
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            <tr *ngFor="let reading of readings">
+
+              <td>
+                {{ reading.timestamp | date:'dd.MM.yyyy HH:mm:ss' }}
+              </td>
+
+              <td>
+                {{ reading.temperature | number:'1.1-1' }} °C
+              </td>
+
+              <td>
+                {{ reading.humidity | number:'1.1-1' }} %
+              </td>
+
+              <td>
+                {{ reading.pressure | number:'1.1-1' }} hPa
+              </td>
+
+            </tr>
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+  <p
+    *ngIf="!loading && !error && readings.length === 0">
+
+    No sensor readings available.
+
+  </p>
+
+</div>

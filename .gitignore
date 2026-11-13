@@ -1,0 +1,90 @@
+# =========================
+# Node.js
+# =========================
+
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+
+# =========================
+# Environment variables
+# =========================
+
+.env
+.env.*
+!.env.example
+
+
+# =========================
+# Angular
+# =========================
+
+dist/
+.angular/
+out-tsc/
+coverage/
+
+
+# =========================
+# IDE
+# =========================
+
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+.idea/
+
+*.swp
+*.swo
+
+
+# =========================
+# OS
+# =========================
+
+.DS_Store
+Thumbs.db
+
+
+# =========================
+# Logs
+# =========================
+
+*.log
+
+
+# =========================
+# Temporary / build files
+# =========================
+
+tmp/
+temp/
+build/
+
+# =========================
+# Arduino
+# =========================
+
+# Arduino IDE
+*.bak
+*.tmp
+
+# Build / compiled files
+*.elf
+*.hex
+*.bin
+*.map
+*.eep
+
+# Arduino IDE temporary folders
+arduino_build_*/
+arduino_cache_*/
+
+# VS Code Arduino extension
+.vscode/
+
+secrets.h

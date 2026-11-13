@@ -1,0 +1,36 @@
+<nav class="navbar">
+
+  <div class="navbar-content">
+
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      class="navbar-brand">
+      ESP32 RGB Controller
+    </a>
+
+    <div class="navbar-links">
+
+      <a
+        routerLink="/"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        Dashboard
+      </a>
+
+      <a
+        routerLink="/history"
+        routerLinkActive="active">
+        History
+      </a>
+
+    </div>
+
+  </div>
+
+</nav>
+
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>

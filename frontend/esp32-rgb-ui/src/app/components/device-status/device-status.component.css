@@ -1,0 +1,40 @@
+.status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.status-dot.online {
+  background: #22c55e;
+}
+
+.status-dot.offline {
+  background: #ef4444;
+}
+
+mat-divider {
+  margin-bottom: 8px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+}
+
+.info-row span {
+  color: #777;
+}
+
+.info-row strong {
+  text-align: right;
+}

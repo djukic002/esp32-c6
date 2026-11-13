@@ -1,0 +1,109 @@
+<mat-card>
+
+  <mat-card-header>
+
+    <mat-card-title>
+      RGB Control
+    </mat-card-title>
+
+    <mat-card-subtitle>
+      Select and control the LED color
+    </mat-card-subtitle>
+
+  </mat-card-header>
+
+  <mat-card-content>
+
+    <div class="color-previews">
+
+      <div class="color-section">
+
+        <span class="color-label">
+          Selected Color
+        </span>
+
+        <div
+          class="color-preview"
+          [style.background-color]="selectedColor">
+        </div>
+
+        <strong>
+          {{ selectedColor }}
+        </strong>
+
+        <span class="rgb-value">
+          {{ getSelectedRgbValue() }}
+        </span>
+
+      </div>
+
+
+      <div class="color-section">
+
+        <span class="color-label">
+          Device Color
+        </span>
+
+        <div
+          class="color-preview"
+          [style.background-color]="getDeviceColorHex()">
+        </div>
+
+        <strong>
+          {{ getDeviceColorHex() }}
+        </strong>
+
+        <span class="rgb-value">
+          {{ getDeviceRgbValue() }}
+        </span>
+
+      </div>
+
+    </div>
+
+
+    <div class="color-picker">
+
+      <label for="color">
+        Select Color
+      </label>
+
+      <input
+        id="color"
+        type="color"
+        [(ngModel)]="selectedColor"
+        (change)="onColorChange()">
+
+    </div>
+
+  </mat-card-content>
+
+
+  <mat-card-actions>
+
+    <button
+      mat-flat-button
+      color="primary"
+      class="apply-button"
+      (click)="applyColor()">
+
+      <mat-icon>lightbulb</mat-icon>
+
+      Apply Color
+
+    </button>
+
+
+    <button
+      mat-stroked-button
+      (click)="selectedColor = '#000000'; onColorChange(); applyColor()">
+
+      <mat-icon>lightbulb_outline</mat-icon>
+
+      Turn Off
+
+    </button>
+
+  </mat-card-actions>
+
+</mat-card>

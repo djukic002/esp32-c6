@@ -1,0 +1,38 @@
+<mat-card>
+
+  <mat-card-header>
+
+    <mat-card-title>
+      Last Command
+    </mat-card-title>
+
+  </mat-card-header>
+
+
+  <mat-card-content>
+
+    <div class="command">
+
+      <mat-icon>
+        info
+      </mat-icon>
+
+      <span>
+        {{ status }}
+      </span>
+
+    </div>
+
+
+    <p
+      *ngIf="updated"
+      class="updated">
+
+      Last command:
+      {{ updated }}
+
+    </p>
+
+  </mat-card-content>
+
+</mat-card>
