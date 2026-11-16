@@ -1,211 +1,320 @@
-# ESP32 Custom Server
+# ESP32 RGB Controller
 
-IoT projekat koji povezuje ESP32-C6, Node.js/Express backend i Angular frontend.
+IoT application for controlling an ESP32-C6 RGB LED and monitoring environmental data from a BME280 sensor.
+
+The project consists of:
+
+- **ESP32-C6** firmware
+- **Node.js + Express** backend
+- **PostgreSQL** database
+- **Angular** frontend
+
+The system supports RGB LED control, real-time device status, temperature/humidity/pressure monitoring, sensor history, and OTA firmware updates.
+
+## Screenshots
+
+### Dashboard
+![Dashboard image](dashboard.png)
+
+### History
+![History image](history.png)
+---
+
+## Architecture
 
 ```text
-Angular
-   ↓ HTTP
-Node.js / Express
-   ↓ HTTP
-ESP32-C6
-   ↓
-RGB LED
+Angular Frontend
+       │
+       ▼
+Node.js / Express API
+       │
+       ├── PostgreSQL
+       │
+       ▼
+   ESP32-C6
+       │
+       ├── RGB LED
+       └── BME280
 ```
 
-## Struktura projekta
+---
+
+## Project Structure
 
 ```text
-project/
+esp32-custom-server/
 ├── backend/
-│   ├── package.json
-│   ├── package-lock.json
-│   └── server.js
+│   ├── firmware/
+│   │   └── firmware.bin
+│   ├── routes/
+│   ├── services/
+│   ├── db.js
+│   ├── server.js
+│   └── package.json
 │
 ├── frontend/
-│   └── esp32-rgb-ui/
 │
-├── .gitignore
+├── esp32-c6-server/
+│   ├── esp32-c6-server.ino
+│   ├── rgb.h
+│   ├── rgb.cpp
+│   ├── sensor.h
+│   ├── sensor.cpp
+│   ├── ota.h
+│   ├── ota.cpp
+│   └── secrets.h
+│
 └── README.md
 ```
 
-## 1. Pokretanje ESP32
+---
 
-ESP32 firmware je Arduino projekat.
+## Hardware
 
-1. Povezati ESP32-C6 USB kablom.
-2. Otvoriti Arduino IDE.
-3. Izabrati odgovarajući ESP32 port:
-   - `Tools → Port → COM4`
-4. **Nije potrebno ponovo uploadovati kod** ako je firmware već na pločici. Dovoljno je priključiti pločicu i sačekati da se pokrene.
-5. Otvoriti Serial Monitor na `115200 baud`.
+### ESP32-C6
 
-Očekivani izlaz:
+The project uses a **Waveshare ESP32-C6-DEV-KIT-NX (N16)**.
+
+The board has an integrated addressable RGB LED, so no external RGB LED is required.
 
 ```text
-Connecting to Wi-Fi...
-........
-Wi-Fi connected!
-IP address: 192.168.1.xxx
-HTTP server started
+RGB LED → GPIO8
 ```
 
-IP adresu ESP32 treba zapamtiti jer je potrebna backendu.
+### BME280
 
-Ako je potrebno ponovo uploadovati firmware, otvoriti Arduino projekat i koristiti `Upload`.
-
-## 2. Provera ESP32
-
-U browseru otvoriti:
+The BME280 is connected using I²C:
 
 ```text
-http://ESP32-IP/
+BME280    ESP32-C6
+------------------
+VCC   →   3V3
+GND   →   GND
+SCL   →   GPIO7
+SDA   →   GPIO6
+CSB   →   not connected
+SDO   →   not connected
 ```
 
-Primer:
+---
+
+## Requirements
+
+- ESP32-C6 development board
+- BME280 sensor
+- Arduino IDE
+- Node.js
+- Angular CLI
+- PostgreSQL
+
+---
+
+## 1. ESP32 Firmware
+
+Open:
 
 ```text
-http://192.168.1.102/
+esp32-c6-server/esp32-c6-server.ino
 ```
 
-Status uređaja:
+Create `secrets.h` in the same directory:
+
+```cpp
+#ifndef SECRETS_H
+#define SECRETS_H
+
+#define WIFI_SSID "YOUR_WIFI"
+#define WIFI_PASSWORD "YOUR_PASSWORD"
+
+#define FIRMWARE_URL "http://YOUR_PC_IP:3000/api/firmware"
+
+#endif
+```
+
+Replace the Wi-Fi credentials and the PC IP address.
+
+The IP address can change depending on your network configuration, so update `FIRMWARE_URL` if the computer running the backend receives a different local IP.
+
+Upload the firmware to the ESP32-C6 using Arduino IDE.
+
+---
+
+## 2. PostgreSQL
+
+Create a database:
+
+```sql
+CREATE DATABASE esp32_controller;
+```
+
+Create the sensor table:
+
+```sql
+CREATE TABLE sensor_readings (
+    id SERIAL PRIMARY KEY,
+    timestamp TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    temperature DOUBLE PRECISION NOT NULL,
+    humidity DOUBLE PRECISION NOT NULL,
+    pressure DOUBLE PRECISION NOT NULL
+);
+```
+
+---
+
+## 3. Backend
+
+Navigate to:
 
 ```text
-http://ESP32-IP/api/status
+backend/
 ```
 
-Primer odgovora:
-
-```json
-{
-  "device": "esp32-c6",
-  "ip": "192.168.1.102",
-  "uptime": 125,
-  "wifiSignal": -48,
-  "color": {
-    "r": 255,
-    "g": 0,
-    "b": 0
-  }
-}
-```
-
-## 3. Pokretanje Node.js backenda
-
-Otvoriti terminal u rootu projekta:
-
-```bash
-cd backend
-```
-
-Ako je potrebno instalirati dependencies:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Pokrenuti server:
+Create `.env`:
+
+```env
+PORT=3000
+ESP32_URL=http://ESP32_IP
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=esp32_controller
+DB_USER=postgres
+DB_PASSWORD=YOUR_PASSWORD
+```
+
+Replace `ESP32_IP` with the current IP address of the ESP32.
+
+The ESP32 IP can change if your router uses DHCP.
+
+Start the backend:
 
 ```bash
 node server.js
 ```
 
-Očekivano:
-
-```text
-Server running on http://localhost:3000
-```
-
-### ESP32 IP adresa
-
-U `backend/server.js` proveriti:
-
-```javascript
-const ESP32_URL = "http://192.168.1.102";
-```
-
-Ako ESP32 dobije drugu IP adresu, promeniti ovu vrednost i restartovati backend.
-
-Provera backenda:
+The API will be available at:
 
 ```text
 http://localhost:3000
 ```
 
-Status:
+---
+
+## 4. Frontend
+
+Navigate to:
 
 ```text
-http://localhost:3000/api/status
+frontend/
 ```
 
-## 4. Pokretanje Angular frontenda
-
-Otvoriti **novi terminal** i iz root foldera projekta:
-
-```bash
-cd frontend/esp32-rgb-ui
-```
-
-Ako je potrebno:
+Install dependencies:
 
 ```bash
 npm install
 ```
 
-Pokrenuti Angular:
+Start Angular:
 
 ```bash
-npx ng serve
+ng serve
 ```
 
-Frontend će biti dostupan na:
+Open:
 
 ```text
 http://localhost:4200
 ```
 
-## Redosled pokretanja
+---
 
-Svaki put kada se projekat ponovo pokreće:
+## API
 
-### Terminal 1 — ESP32
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/color` | Set RGB color |
+| `GET` | `/api/status` | Get device status |
+| `GET` | `/api/history` | Get sensor history |
+| `GET` | `/api/firmware` | Download firmware |
+| `POST` | `/api/update` | Start OTA update |
+
+---
+
+## OTA Firmware Updates
+
+Firmware updates are performed through the backend:
 
 ```text
-USB → ESP32
-↓
-Wi-Fi
-↓
-HTTP server
+Angular
+   ↓
+POST /api/update
+   ↓
+Node.js Backend
+   ↓
+POST /api/update
+   ↓
+ESP32
+   ↓
+Downloads firmware from
+/api/firmware
+   ↓
+Installs update
+   ↓
+Restarts
 ```
 
-Proveriti IP adresu preko Serial Monitora.
+The current firmware version is displayed on the dashboard.
 
-### Terminal 2 — Backend
+To release a new firmware version:
+
+1. Change `FIRMWARE_VERSION` in the ESP32 firmware.
+2. Compile the firmware.
+3. Place the generated `.bin` file in:
+
+```text
+backend/firmware/firmware.bin
+```
+
+4. Start the backend.
+5. Use **Update Firmware** from the dashboard.
+
+---
+
+## Running the Full System
+
+Start the following components:
+
+### PostgreSQL
+
+Make sure the database is running.
+
+### Backend
 
 ```bash
 cd backend
 node server.js
 ```
 
-### Terminal 3 — Frontend
+### Angular
 
 ```bash
-cd frontend/esp32-rgb-ui
-npx ng serve
+cd frontend
+ng serve
 ```
 
-Zatim otvoriti:
+### ESP32
+
+Power the ESP32 and make sure it is connected to the configured Wi-Fi network.
+
+Then open:
 
 ```text
 http://localhost:4200
 ```
 
-## Brza provera
-
-Ako nešto ne radi, proveravati redom:
-
-1. **ESP32** — da li se povezao na Wi-Fi?
-2. **ESP32 `/api/status`** — da li direktno vraća JSON?
-3. **Backend `/api/status`** — da li Node može da komunicira sa ESP32?
-4. **Angular** — da li dashboard prikazuje uređaj kao Online?
-
-Ako se promenila IP adresa ESP32, ažurirati `ESP32_URL` u `backend/server.js`.
+The dashboard can be used to control the RGB LED, view the current device status, monitor sensor data, view historical measurements, and update the firmware.
